@@ -1,23 +1,23 @@
 package dao;
 
 import entity.Policy;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import myexceptions.PolicyNotFoundException;
 import util.DBConnection;
+import util.Propertyutil;
 
 public class InsuranceServiceImpl implements IPolicyService {
+
+    private static final String PROPERTIES_FILE = "dbconfig.properties"; // Properties file name
 
     // Create a new policy and insert it into the database
     @Override
     public boolean createPolicy(Policy policy) {
         String query = "INSERT INTO policy (policyId, policyName, coverageAmount, premium) VALUES (?, ?, ?, ?)";
-        try (Connection conn = DBConnection.getConnection();
+        
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, policy.getPolicyId());
@@ -25,9 +25,10 @@ public class InsuranceServiceImpl implements IPolicyService {
             pstmt.setDouble(3, policy.getCoverageAmount());
             pstmt.setDouble(4, policy.getPremium());
 
-            return pstmt.executeUpdate() > 0;  // Returns true if insertion is successful
+            return pstmt.executeUpdate() > 0;  
 
         } catch (SQLException e) {
+            System.err.println("Failed to insert policy.");
             e.printStackTrace();
         }
         return false;
@@ -37,7 +38,8 @@ public class InsuranceServiceImpl implements IPolicyService {
     @Override
     public Policy getPolicy(String policyId) throws PolicyNotFoundException {
         String query = "SELECT * FROM policy WHERE policyId = ?";
-        try (Connection conn = DBConnection.getConnection();
+        
+        try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, policyId);
@@ -54,11 +56,11 @@ public class InsuranceServiceImpl implements IPolicyService {
                 }
             }
         } catch (SQLException e) {
+            System.err.println(" Database error while fetching policy.");
             e.printStackTrace();
         }
         return null;
     }
-
 
     // Retrieve all policies
     @Override
@@ -66,10 +68,11 @@ public class InsuranceServiceImpl implements IPolicyService {
         String query = "SELECT * FROM policy";
         Collection<Policy> policies = new ArrayList<>();
 
-        try (Connection conn = DBConnection.getConnection();
+        try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
+            System.out.println("Displaying all policies from the Database:");
             while (rs.next()) {
                 policies.add(new Policy(
                         rs.getString("policyId"),
@@ -80,6 +83,7 @@ public class InsuranceServiceImpl implements IPolicyService {
             }
 
         } catch (SQLException e) {
+            System.err.println("Failed to retrieve policies.");
             e.printStackTrace();
         }
         return policies;
@@ -89,7 +93,8 @@ public class InsuranceServiceImpl implements IPolicyService {
     @Override
     public boolean updatePolicy(Policy policy) {
         String query = "UPDATE policy SET policyName = ?, coverageAmount = ?, premium = ? WHERE policyId = ?";
-        try (Connection conn = DBConnection.getConnection();
+        
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, policy.getPolicyName());
@@ -97,9 +102,10 @@ public class InsuranceServiceImpl implements IPolicyService {
             pstmt.setDouble(3, policy.getPremium());
             pstmt.setString(4, policy.getPolicyId());
 
-            return pstmt.executeUpdate() > 0;  // Returns true if update is successful
+            return pstmt.executeUpdate() > 0;  
 
         } catch (SQLException e) {
+            System.err.println("Failed to update policy.");
             e.printStackTrace();
         }
         return false;
@@ -109,15 +115,23 @@ public class InsuranceServiceImpl implements IPolicyService {
     @Override
     public boolean deletePolicy(String policyId) {
         String query = "DELETE FROM policy WHERE policyId = ?";
-        try (Connection conn = DBConnection.getConnection();
+        
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, policyId);
-            return pstmt.executeUpdate() > 0;  // Returns true if deletion is successful
+            return pstmt.executeUpdate() > 0;  
 
         } catch (SQLException e) {
+            System.err.println(" Failed to delete policy.");
             e.printStackTrace();
         }
         return false;
     }
+
+    private Connection getConnection() {
+        String connectionString = Propertyutil.getConnectionString(PROPERTIES_FILE);
+        return DBConnection.getConnection(connectionString);
+    }
 }
+
