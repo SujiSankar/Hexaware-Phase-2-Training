@@ -22,13 +22,13 @@ public class MainModule {
             System.out.print("Enter your choice: ");
             
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine(); 
 
             switch (choice) {
                 case 1:
                     System.out.print("Enter Policy ID: ");
                     String policyId = scanner.next();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); 
 
                     System.out.print("Enter Policy Name: ");
                     String policyName = scanner.nextLine();
@@ -38,7 +38,7 @@ public class MainModule {
 
                     System.out.print("Enter Premium Amount: ");
                     double premium = scanner.nextDouble();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); 
 
                     Policy policy = new Policy(policyId, policyName, coverageAmount, premium);
                     System.out.println("Trying to insert Policy ID:" + policyId);
@@ -50,7 +50,7 @@ public class MainModule {
                 case 2:
                     System.out.print("Enter Policy ID to fetch: ");
                     String searchId = scanner.next();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); 
 
                     try {
                         Policy fetchedPolicy = policyService.getPolicy(searchId);
@@ -70,7 +70,7 @@ public class MainModule {
                 case 4:
                     System.out.print("Enter Policy ID to update: ");
                     String updateId = scanner.next();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); 
 
                     System.out.print("Enter New Policy Name: ");
                     String newName = scanner.nextLine();
@@ -80,7 +80,7 @@ public class MainModule {
 
                     System.out.print("Enter New Premium Amount: ");
                     double newPremium = scanner.nextDouble();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine(); 
                     
                     Policy updatedPolicy = new Policy(updateId, newName, newCoverage, newPremium);
                     boolean updated = policyService.updatePolicy(updatedPolicy);
@@ -90,7 +90,7 @@ public class MainModule {
                 case 5:
                     System.out.print("Enter Policy ID to delete: ");
                     String deleteId = scanner.next();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
 
                     boolean deleted = policyService.deletePolicy(deleteId);
                     System.out.println(deleted ? "Policy deleted successfully..." : "Such Policy Not Found.");
@@ -108,3 +108,4 @@ public class MainModule {
         }
     }
 }
+
