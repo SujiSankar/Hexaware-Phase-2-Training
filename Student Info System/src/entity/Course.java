@@ -8,10 +8,10 @@ public class Course {
     private String courseId;  
     private String courseName;
     private int credits;
-    private int teacherId; // Matches DB
+    private int teacherId;
     private String courseCode;
 
-    private Teacher teacher;  // Optional - for full object mapping
+    private Teacher teacher; 
     private List<Enrollment> enrollments;
 
     public Course() {
@@ -27,9 +27,9 @@ public class Course {
         this.enrollments = new ArrayList<>();
     }
 
-    // Overloaded constructor without teacherId (in case it's not yet assigned)
+    
     public Course(String courseId, String courseName, int credits, String courseCode) {
-        this(courseId, courseName, credits, 0, courseCode); // teacherId = 0 => unassigned
+        this(courseId, courseName, credits, 0, courseCode); 
     }
 
     // Getters and setters
@@ -91,7 +91,7 @@ public class Course {
 
     public void assignTeacher(Teacher teacher) {
         this.teacher = teacher;
-        this.teacherId = teacher.getTeacherId(); // Keep both updated
+        this.teacherId = teacher.getTeacherId(); 
     }
 
     public void enrollStudent(String enrollmentId, Student student, Date enrollmentDate) {
